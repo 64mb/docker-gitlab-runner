@@ -1,0 +1,45 @@
+version: '3.4'
+
+services:
+  gitlab_runner:
+    build:
+      context: ./
+      dockerfile: ./dockerfile
+    image: gitlab_runner:${VERSION:?lost VERSION variable}
+    container_name: gitlab_runner-${RUNNER_DESCRIPTION:?lost RUNNER_DESCRIPTION variable}
+    environment:
+      - RUNNER_URL=${RUNNER_URL:?lost RUNNER_URL variable}
+      - RUNNER_DESCRIPTION=${RUNNER_DESCRIPTION:?lost RUNNER_DESCRIPTION variable}
+      - RUNNER_TOKEN=${RUNNER_TOKEN:?lost RUNNER_TOKEN variable}
+      - RUNNER_TAGS=${RUNNER_TAGS}
+
+      - RUNNER_CONCURRENT_JOB_COUNT=${RUNNER_CONCURRENT_JOB_COUNT:-1}
+    restart: always
+    depends_on:
+      - registry_proxy
+    healthcheck:
+      test: curl -f http://localhost:9252/metrics
+      interval: 20s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    tmpfs:
+      - /etc/gitlab-runner
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - local
+
+  registry_proxy:
+    build:
+      context: ./
+      dockerfile: ./proxy/dockerfile
+    image: registry_proxy:${VERSION_PROXY:?lost VERSION_PROXY variable}
+    container_name: registry_proxy
+    restart: always
+    networks:
+      - local
+
+networks:
+  local:
+    driver: bridge

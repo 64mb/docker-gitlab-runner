@@ -1,0 +1,18 @@
+concurrent = {RUNNER_CONCURRENT_JOB_COUNT}
+listen_address = "[::]:9252"
+check_interval = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "{RUNNER_NAME}"
+  url = "{RUNNER_URL}"
+  token = "{RUNNER_TOKEN}"
+  executor = "shell"
+  shell = "bash"
+  [runners.custom_build_dir]
+  [runners.cache]
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]

@@ -1,0 +1,20 @@
+FROM node:12-alpine3.12
+
+RUN mkdir -p /home/node/app && chown -R node:node /home/node/app
+
+WORKDIR /home/node/app
+
+COPY ./cert/gitlab.registry.crt ./gitlab.registry.crt
+COPY ./cert/gitlab.registry.key ./gitlab.registry.key
+
+COPY ./proxy/package*.json ./
+
+USER node
+
+RUN npm ci --only=production
+
+COPY --chown=node:node ./proxy .
+
+EXPOSE 443
+
+CMD [ "node", "server.js" ]

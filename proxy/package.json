@@ -1,0 +1,14 @@
+{
+  "name": "registry_proxy",
+  "version": "1.0.1",
+  "description": "GitLab registry one server proxy",
+  "main": "server.js",
+  "private": true,
+  "author": "64mb",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "http-proxy": "^1.18.1"
+  }
+}
